@@ -19,7 +19,7 @@ contract DeployTokenSale is Script {
         address ownerAddress = vm.addr(deployerKey);
         //Token Address
         address tokenAddress;
-        //address tokenAddress;
+
         //pre-sale
         uint256 preSaleMinTotalCap = 100 ether;
         uint256 preSaleMaxTotalCap = 1_000 ether;

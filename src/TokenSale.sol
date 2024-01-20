@@ -27,6 +27,11 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
+/// @title TokenSale
+/// @author Marquis
+/// @notice This is a token sale contract where the token can be purchsed 1:1 for ethereum
+/// @notice There is a preSale and a publicSale which have min and max amounts. If max no more tokens will be sold and min is not reached after the end of the sale, users can claim a refund.
+/// @notice The start and changing between preSale and publicSale are all handled manually by the owner wallet which by default is the deployer of the contract
 contract TokenSale is Ownable, ReentrancyGuard {
     ////////////////////
     // Errors //////////

@@ -23,6 +23,9 @@
 
 pragma solidity ^0.8.19;
 
+/// @title DecentralizedVotingSystem
+/// @author Marquis
+/// @notice Multiple Signature Wallet Where you can use multiple private keys to stage, confirm, and execute transactions for an added layer of security
 contract MultiSigWallet {
     ////////////////////
     // Errors //////////

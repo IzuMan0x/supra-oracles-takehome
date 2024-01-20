@@ -26,6 +26,11 @@ pragma solidity ^0.8.19;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+/// @title TokenSwap
+/// @author Marquis
+/// @notice A simple ERC20 token swap where you can trade tokenA for tokenB and vice-versa at a pre-defined exchange rate that is defined when the contract is deployed.
+/// @notice Only supports the swapping between two tokens defined at deployment/constructor.
+/// @notice There is a chance for the contract to become quickly illiquid with a fixed rate.
 contract TokenSwap is ReentrancyGuard {
     ////////////////////
     // Errors /////////
