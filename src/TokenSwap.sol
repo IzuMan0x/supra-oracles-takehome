@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 
-// Layout of Contract:
 // version
 // imports
 // interfaces, libraries, contracts
+// Layout of Contract:
 // errors
 // Type declarations
 // State variables
