@@ -82,10 +82,12 @@ contract TokenSale is Ownable, ReentrancyGuard {
     event PreSaleOpened(uint256 indexed time, address indexed owner);
     event PublicSaleOpened(uint256 indexed time, address indexed owner);
     event PreSaleClosed(uint256 indexed time, address indexed owner);
+    event PublicSaleClosed(uint256 indexed time, address indexed owner);
 
     ////////////////////
     // Functions //////
     ///////////////////
+
     constructor(
         //owner address
         address ownerAddress,
@@ -122,6 +124,7 @@ contract TokenSale is Ownable, ReentrancyGuard {
         s_publicSaleMinContribution = publicSaleMinContribution;
         s_publicSaleMaxContribution = publicSaleMaxContribution;
     }
+    /// @notice Opens the preSale
 
     function openPreSale() external onlyOwner {
         if (s_publicSaleOpen == true) {
@@ -132,6 +135,7 @@ contract TokenSale is Ownable, ReentrancyGuard {
         }
     }
 
+    /// @notice Closes the preSale
     function closePreSale() external onlyOwner {
         if (s_publicSaleOpen == true || s_preSaleOpen == false) {
             revert TokenSale__PreSaleCannotBeClosed();
@@ -140,6 +144,7 @@ contract TokenSale is Ownable, ReentrancyGuard {
         emit PreSaleClosed(block.timestamp, msg.sender);
     }
 
+    /// @notice Opens the Public Sale
     function openPublicSale() external onlyOwner {
         if (s_publicSaleOpen == true) {
             revert TokenSale__CannotStartPublicSaleWhilePublicSaleIsOpen();
@@ -151,12 +156,17 @@ contract TokenSale is Ownable, ReentrancyGuard {
         }
     }
 
+    /// @notice Closes the Public Sale
     function closePublicSale() external onlyOwner {
         if (s_publicSaleOpen == false || s_preSaleOpen == true) {
             revert TokenSale__PublicSaleCannotBeClosed();
+        } else {
+            s_publicSaleOpen = false;
+            emit PublicSaleClosed(block.timestamp, msg.sender);
         }
     }
 
+    /// @notice preSale users can buy tokens for a 1:1 exchange between ether
     function contributePreSale() public payable nonReentrant {
         if (!s_preSaleOpen) {
             revert TokenSale__PreSaleNotOpen();
@@ -181,6 +191,7 @@ contract TokenSale is Ownable, ReentrancyGuard {
         emit PreSaleContribution(msg.sender, msg.value);
     }
 
+    ///@notice users can buy tokens for a 1:1 exchange between ether
     function contributePublicSale() public payable nonReentrant {
         if (!s_publicSaleOpen) {
             revert TokenSale__PublicSaleNotOpen();
@@ -204,6 +215,8 @@ contract TokenSale is Ownable, ReentrancyGuard {
         emit PublicSaleContribution(msg.sender, msg.value);
     }
 
+    /// @notice user can claim a refund if the minimum is not reached for both preSale and publicSale
+    /// @dev both the preSale and publicSale must be closed for a user to claim a arefund
     function refund() external nonReentrant {
         if (s_preSaleOpen == true || s_publicSaleOpen == true) {
             revert TokenSale__UnableToRefundWhileSaleIsLive();
@@ -228,6 +241,7 @@ contract TokenSale is Ownable, ReentrancyGuard {
         emit ContributionsRefunded(msg.sender, refundAmount);
     }
 
+    /// @notice Transfers any ERC20 from the contract and can only called by the owner
     function distributeTokens(address tokenAddress, uint256 amount, address transferAddress)
         external
         nonReentrant
@@ -235,6 +249,13 @@ contract TokenSale is Ownable, ReentrancyGuard {
     {
         bool success = IERC20(tokenAddress).transfer(transferAddress, amount);
         if (!success) {
+            revert TokenSale__TransferFailed();
+        }
+    }
+
+    function withdraw() external nonReentrant onlyOwner {
+        (bool sent,) = payable(msg.sender).call{value: address(this).balance}("");
+        if (!sent) {
             revert TokenSale__TransferFailed();
         }
     }
